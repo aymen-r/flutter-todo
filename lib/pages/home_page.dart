@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   // text controller
   final myController = TextEditingController();
+  final updateController = TextEditingController();
 
   // change checkBox
   void checkBoxChange(bool? value, int index) {
@@ -48,8 +49,8 @@ class _HomePageState extends State<HomePage> {
         myController.clear();
       });
       Navigator.of(context).pop();
+      db.updateData();
     }
-    db.updateData();
   }
 
   // create new task
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (ctx) {
           return DialogBox(
+            type: 'add',
             controller: myController,
             onSave: saveNewTask,
             onCancel: () => Navigator.of(context).pop(),
@@ -67,9 +69,43 @@ class _HomePageState extends State<HomePage> {
 
   // delete Task
   void deleteTask(int index) {
-    setState(() {
-      db.todoList.removeAt(index);
-    });
+    setState(
+      () {
+        db.todoList.removeAt(index);
+      },
+    );
+    db.updateData();
+  }
+
+  // edit Task
+  void editTask(int index) {
+    setState(
+      () {
+        updateController.text = db.todoList[index][0];
+        showDialog(
+          context: context,
+          builder: (ctx) {
+            return DialogBox(
+              initialValue: db.todoList[index][0],
+              type: 'edit',
+              controller: updateController,
+              onSave: () {
+                setState(() {
+                  db.todoList[index][0] = updateController.text;
+                  updateController.clear();
+                });
+                Navigator.of(context).pop();
+                db.updateData();
+              },
+              onCancel: () {
+                Navigator.of(context).pop();
+                myController.clear();
+              },
+            );
+          },
+        );
+      },
+    );
     db.updateData();
   }
 
@@ -90,6 +126,7 @@ class _HomePageState extends State<HomePage> {
           slivers: [
             const SliverAppBar(
               // leading: const Icon(Icons.menu),
+
               expandedHeight: 200,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
@@ -98,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                 expandedTitleScale: 1.5,
                 collapseMode: CollapseMode.parallax,
                 background: Image(
-                  image: AssetImage('images/2.jpg'),
+                  image: AssetImage('images/6.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -111,6 +148,7 @@ class _HomePageState extends State<HomePage> {
                     taskCompleted: db.todoList[index][1],
                     onChanged: (value) => checkBoxChange(value, index),
                     deleteTask: (context) => deleteTask(index),
+                    editTask: (context) => editTask(index),
                   );
                 },
                 childCount: db.todoList.length,

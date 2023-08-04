@@ -3,15 +3,19 @@ import 'package:todo/utilities/my_button.dart';
 
 class DialogBox extends StatelessWidget {
   final controller;
+
+  String type;
+  String? initialValue;
   VoidCallback onSave;
   VoidCallback onCancel;
 
-  DialogBox({
-    super.key,
-    required this.controller,
-    required this.onSave,
-    required this.onCancel,
-  });
+  DialogBox(
+      {super.key,
+      required this.type,
+      required this.controller,
+      required this.onSave,
+      required this.onCancel,
+      this.initialValue});
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -23,8 +27,9 @@ class DialogBox extends StatelessWidget {
             //inputs:
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: "New task"),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: type == 'edit' ? "Edit Task" : "New task"),
             ),
             const SizedBox(
               height: 20,
