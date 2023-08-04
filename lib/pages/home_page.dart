@@ -76,35 +76,49 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 70,
-          centerTitle: true,
-          title: const Text(
-            'TO DO',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+      backgroundColor: Colors.deepPurple[200],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          return createNewTask();
+        },
+        elevation: 15,
+        child: const Icon(Icons.add),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 25),
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              // leading: const Icon(Icons.menu),
+              expandedHeight: 200,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text('My TO DO List'),
+                centerTitle: true,
+                expandedTitleScale: 1.5,
+                collapseMode: CollapseMode.parallax,
+                background: Image(
+                  image: AssetImage('images/2.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
-          elevation: 0,
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return ToDoTile(
+                    taskName: db.todoList[index][0],
+                    taskCompleted: db.todoList[index][1],
+                    onChanged: (value) => checkBoxChange(value, index),
+                    deleteTask: (context) => deleteTask(index),
+                  );
+                },
+                childCount: db.todoList.length,
+              ),
+            )
+          ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            return createNewTask();
-          },
-          elevation: 15,
-          child: const Icon(Icons.add),
-        ),
-        body: ListView.builder(
-          itemCount: db.todoList.length,
-          itemBuilder: (context, index) {
-            return ToDoTile(
-              taskName: db.todoList[index][0],
-              taskCompleted: db.todoList[index][1],
-              onChanged: (value) => checkBoxChange(value, index),
-              deleteTask: (context) => deleteTask(index),
-            );
-          },
-        ));
+      ),
+    );
   }
 }

@@ -9,6 +9,7 @@ class MyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+      elevation: 3,
       onPressed: onPressed,
       color:
           text == 'Cancel' ? Colors.red[400] : Theme.of(context).primaryColor,
